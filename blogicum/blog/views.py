@@ -44,7 +44,7 @@ posts: list[dict] = [
     },
 ]
 
-posts_dict: dict = {k: v for (k, v) in zip([x['id'] for x in posts], posts)}
+posts_dict: dict = {post['id']: post for post in posts}
 
 
 def index(request):
@@ -58,12 +58,13 @@ def post_detail(request, post_id):
     try:
         context = {'post': posts_dict[post_id]}
     except KeyError:
-        raise Http404("Post does not exist")
+        raise Http404('Post does not exist')
     return render(request, template, context)
 
 
 def category_posts(request, category_slug):
     template = 'blog/category.html'
-    context = {'posts': [x for x in posts if x['category'] == category_slug],
+    category_posts_list = [post for post in posts if post['category'] == category_slug]
+    context = {'posts': category_posts_list,
                'category': category_slug}
     return render(request, template, context)
